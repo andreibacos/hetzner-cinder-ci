@@ -160,19 +160,19 @@ ExecRetry {
 Get-ChildItem $buildDir
 
 pushd C:\
-if (Test-Path $pythonArchive)
-{
-    Remove-Item -Force $pythonArchive
-}
-Invoke-WebRequest -Uri http://144.76.59.195:8088/python.zip -OutFile $pythonArchive
-if (Test-Path $pythonDir)
-{
-    Cmd /C "rmdir /S /Q $pythonDir"
-    #Remove-Item -Recurse -Force $pythonDir
-}
-Write-Host "Ensure Python folder is up to date"
-Write-Host "Extracting archive.."
-[System.IO.Compression.ZipFile]::ExtractToDirectory("C:\$pythonArchive", "C:\")
+#if (Test-Path $pythonArchive)
+#{
+#    Remove-Item -Force $pythonArchive
+#}
+#Invoke-WebRequest -Uri http://144.76.59.195:8088/python.zip -OutFile $pythonArchive
+#if (Test-Path $pythonDir)
+#{
+#    Cmd /C "rmdir /S /Q $pythonDir"
+#    #Remove-Item -Recurse -Force $pythonDir
+#}
+#Write-Host "Ensure Python folder is up to date"
+#Write-Host "Extracting archive.."
+#[System.IO.Compression.ZipFile]::ExtractToDirectory("C:\$pythonArchive", "C:\")
 
 Add-Content "$env:APPDATA\pip\pip.ini" $pip_conf_content
 
