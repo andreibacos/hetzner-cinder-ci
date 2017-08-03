@@ -121,7 +121,7 @@ join_windows(){
     run_wsmancmd_with_retry 3 $PARAMS 'powershell -ExecutionPolicy RemoteSigned if (-Not (test-path '$LOG_DIR')){mkdir '$LOG_DIR'}'
     run_wsmancmd_with_retry 3 $PARAMS 'powershell -ExecutionPolicy RemoteSigned Remove-Item -Recurse -Force C:\OpenStack\cinder-ci ; git clone https://github.com/andreibacos/hetzner-cinder-ci C:\OpenStack\cinder-ci ; cd C:\OpenStack\cinder-ci ; git checkout master >> '$LOG_DIR'\010-clone_ci_repo.log 2>&1'
     #echo "Teardown first"
-    run_wsmancmd_with_retry 3 $PARAMS 'powershell -ExecutionPolicy RemoteSigned C:\openstack\cinder-ci\windows\scripts\teardown.ps1'
+#    run_wsmancmd_with_retry 3 $PARAMS 'powershell -ExecutionPolicy RemoteSigned C:\openstack\cinder-ci\windows\scripts\teardown.ps1'
     echo "Disable firewall for cinder-volume"
     run_ps_cmd_with_retry 3 $PARAMS 'netsh.exe advfirewall set allprofiles state off'
     echo "calling initial_cleanup.ps1 -devstackIP $FIXED_IP -branchName $ZUUL_BRANCH -buildFor $ZUUL_PROJECT -testCase $JOB_TYPE -winUser $WIN_USER -winPasswd $WIN_PASS -hypervNodes $HYPERV_NODES redir to '$LOG_DIR'"
@@ -131,8 +131,10 @@ join_windows(){
     run_ps_cmd_with_retry 3 $PARAMS '"C:\openstack\cinder-ci\windows\scripts\EnsureOpenStackServices.ps1 '$WIN_USER' '$WIN_PASS' >> '$LOG_DIR'\020-ensure_openstack_services.log 2>&1"'
     run_ps_cmd_with_retry 3 $PARAMS '"C:\openstack\cinder-ci\windows\scripts\ensure_python.ps1 -devstackIP '$FIXED_IP' -branchName '$ZUUL_BRANCH' -buildFor '$ZUUL_PROJECT' -testCase '$JOB_TYPE' -winUser '$WIN_USER' -winPasswd '$WIN_PASS' -hypervNodes '$HYPERV_NODES' >> '$LOG_DIR'\040-ensure_pytong.log 2>&1"'
     run_ps_cmd_with_retry 3 $PARAMS '"C:\openstack\cinder-ci\windows\scripts\ensure_pip_pkgs.ps1 -devstackIP '$FIXED_IP' -branchName '$ZUUL_BRANCH' -buildFor '$ZUUL_PROJECT' -testCase '$JOB_TYPE' -winUser '$WIN_USER' -winPasswd '$WIN_PASS' -hypervNodes '$HYPERV_NODES' >> '$LOG_DIR'\050-ensure_pip_pkgs.log 2>&1"'
-    echo "Run gerrit-git-prep on $PARAMS with zuul-site=$ZUUL_SITE zuul-ref=$ZUUL_REF zuul-change=$ZUUL_CHANGE zuul-project=$ZUUL_PROJECT"
-    run_wsmancmd_with_retry 3 $PARAMS "bash C:\openstack\cinder-ci\windows\scripts\gerrit-git-prep.sh --zuul-site $ZUUL_SITE --gerrit-site $ZUUL_SITE --zuul-ref $ZUUL_REF --zuul-change $ZUUL_CHANGE --zuul-project $ZUUL_PROJECT"
+ #   echo "Run gerrit-git-prep on $PARAMS with zuul-site=$ZUUL_SITE zuul-ref=$ZUUL_REF zuul-change=$ZUUL_CHANGE zuul-project=$ZUUL_PROJECT"
+ #   run_wsmancmd_with_retry 3 $PARAMS "bash C:\openstack\cinder-ci\windows\scripts\gerrit-git-prep.sh --zuul-site $ZUUL_SITE --gerrit-site $ZUUL_SITE --zuul-ref $ZUUL_REF --zuul-change $ZUUL_CHANGE --zuul-project $ZUUL_PROJECT"
+    run_pscmd_with_retry $1 $2 $3 'zuul-cloner -m C:\OpenStack\cinder-ci\jobs\clonemap.yaml -v git://git.openstack.org '$ZUUL_PROJECT' --zuul-branch '$ZUUL_BRANCH' --zuul-ref '$ZUUL_REF' --zuul-url '$ZUUL_SITE'/p --workspace c:\openstack\build'
+
     echo "installin cinder"
     run_ps_cmd_with_retry 3 $PARAMS '"C:\openstack\cinder-ci\windows\scripts\install_cinder.ps1 -devstackIP '$FIXED_IP' -branchName '$ZUUL_BRANCH' -buildFor '$ZUUL_PROJECT' -testCase '$JOB_TYPE' -winUser '$WIN_USER' -winPasswd '$WIN_PASS' -hypervNodes '$HYPERV_NODES' >> '$LOG_DIR'\060-install_cinder.log 2>&1"'
     echo "creating config"

@@ -171,11 +171,6 @@ echo FIXED_IP=$DEVSTACK_IP | tee -a /home/jenkins-slave/runs/devstack_params.$ZU
 echo "Starting building HyperV and ws2012 nodes"
 
 export LOG_DIR='C:\Openstack\logs\'
-nohup $basedir/build_hyperv.sh $hyperv01 $JOB_TYPE > /home/jenkins-slave/logs/hyperv-$hyperv01-build-log-$ZUUL_UUID-$JOB_TYPE.log 2>&1 &
-pid_hv01=$!
-
-nohup $basedir/build_windows.sh $ws2012r2 $JOB_TYPE "$hyperv01" > /home/jenkins-slave/logs/ws2012-build-log-$ZUUL_UUID-$JOB_TYPE.log 2>&1 &
-pid_ws2012=$!
 
 echo "Copy scripts to devstack VM"
 scp -v -r -o "StrictHostKeyChecking no" -o "UserKnownHostsFile /dev/null" -i $DEVSTACK_SSH_KEY $basedir/../devstack_vm/* ubuntu@$DEVSTACK_FLOATING_IP:/home/ubuntu/
