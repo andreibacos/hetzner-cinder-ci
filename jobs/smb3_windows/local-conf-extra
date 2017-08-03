@@ -1,0 +1,15 @@
+[[local|localrc]]
+TEMPEST_VOLUME_DRIVER="Generic_SMBFS"
+TEMPEST_VOLUME_VENDOR="Open Source"
+TEMPEST_STORAGE_PROTOCOL=smbfs
+
+disable_service c-vol
+
+[[post-config|$NOVA_CONF]]
+[libvirt]
+# libvirt-qemu uid, gid
+smbfs_mount_options='-o uid=107,gid=113 -o guest'
+
+[[post-config|$CINDER_CONF]]
+[DEFAULT]
+default_volume_type=blank

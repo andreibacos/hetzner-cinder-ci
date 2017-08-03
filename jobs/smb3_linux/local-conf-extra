@@ -1,0 +1,23 @@
+[[local|localrc]]
+TEMPEST_VOLUME_DRIVER="Generic_SMBFS"
+TEMPEST_VOLUME_VENDOR="Open Source"
+TEMPEST_STORAGE_PROTOCOL=smbfs
+
+enable_service c-vol
+CINDER_ENABLED_BACKENDS=SMBFS
+
+[[post-config|$CINDER_CONF]]
+[DEFAULT]
+default_volume_type=blank
+os_privileged_user_password=Passw0rd
+os_privileged_user_tenant=admin
+os_privileged_user_name=admin
+[SMBFS]
+volume_backend_name=SMBFS
+volume_driver=cinder.volume.drivers.smbfs.SmbfsDriver
+smbfs_shares_config=/etc/cinder/smbfs_shares_config
+
+[[post-config|$NOVA_CONF]]
+[libvirt]
+# libvirt-qemu uid, gid
+smbfs_mount_options='-o uid=107,gid=113 -o guest'
