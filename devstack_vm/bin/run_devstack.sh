@@ -145,7 +145,7 @@ pid=$!
 wait $pid
 cat $STACK_LOG
 
-TCP_PORTS=(80 137 443 3260 3306 5000 5355 5672 6000 6001 6002 8000 8003 8004 8080 8773 8774 8775 8776 8777 9191 9292 9696 35357)
-firewall_manage_ports $hyperv01_ip add enable ${TCP_PORTS[@]}
-firewall_manage_ports $hyperv02_ip add enable ${TCP_PORTS[@]}
-firewall_manage_ports $ws2012r2_ip add enable ${TCP_PORTS[@]}
+#TCP_PORTS=(80 137 443 3260 3306 5000 5355 5672 6000 6001 6002 8000 8003 8004 8080 8773 8774 8775 8776 8777 9191 9292 9696 35357)
+#firewall_manage_ports $hyperv01_ip add enable ${TCP_PORTS[@]}
+#firewall_manage_ports $hyperv02_ip add enable ${TCP_PORTS[@]}
+#firewall_manage_ports $ws2012r2_ip add enable ${TCP_PORTS[@]}

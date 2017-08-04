@@ -24,7 +24,7 @@ function unzip($src, $dest) {
 	}
 
 }
-$serverIP = (Get-NetIPAddress | Where-Object {$_.IPAddress -like "10.*" -and $_.AddressFamily -like "IPv4"}).IPAddress
+$serverIP = (Get-NetIPAddress | Where-Object {$_.IPAddress -like "192.*" -and $_.AddressFamily -like "IPv4"}).IPAddress
 if (!$serverIP) {
     Throw "Could not get windows machine dataplane IP"
 }
