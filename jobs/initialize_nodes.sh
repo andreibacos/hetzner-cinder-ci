@@ -127,6 +127,8 @@ fi
 echo DEVSTACK_IP=$DEVSTACK_IP | tee -a /home/jenkins-slave/runs/devstack_params.$ZUUL_UUID.$JOB_TYPE.txt
 echo HV1_IP=$HV1_IP | tee -a /home/jenkins-slave/runs/devstack_params.$ZUUL_UUID.$JOB_TYPE.txt
 echo WIN_IP=$WIN_IP | tee -a /home/jenkins-slave/runs/devstack_params.$ZUUL_UUID.$JOB_TYPE.txt
+echo ws2012r2=$WIN_IP | tee -a /home/jenkins-slave/runs/devstack_params.$ZUUL_UUID.$JOB_TYPE.txt
+echo hyperv01=$HV1_IP | tee -a /home/jenkins-slave/runs/devstack_params.$ZUUL_UUID.$JOB_TYPE.txt
 
 hyperv01=$HV1_IP
 ws2012r2=$WIN_IP
@@ -201,7 +203,7 @@ set +e
 exit_code_cifs=0
 echo "Allowing 30 seconds sleep for /var/lib/dpkg/lock to release"
 sleep 30
-run_ssh_cmd_with_retry ubuntu@$DEVSTACK_FLOATING_IP $DEVSTACK_SSH_KEY "sudo apt-get install cifs-utils -y -o Debug::pkgProblemResolver=true -o Debug::Acquire::http=true -f" 12
+run_ssh_cmd_with_retry ubuntu@$DEVSTACK_FLOATING_IP $DEVSTACK_SSH_KEY "sudo apt-get install cifs-utils smbclient -y -o Debug::pkgProblemResolver=true -o Debug::Acquire::http=true -f" 12
 if [ $? -ne 0 ]; then
     sleep 5
     run_ssh_cmd_with_retry ubuntu@$DEVSTACK_FLOATING_IP $DEVSTACK_SSH_KEY "sudo wget http://144.76.59.195:8088/cifs-utils_6.0-1ubuntu2_amd64.deb -O /tmp/cifs-utils_6.0-1ubuntu2_amd64.deb && sudo dpkg --install /tmp/cifs-utils_6.0-1ubuntu2_amd64.deb" 12
@@ -259,7 +261,7 @@ nohup $basedir/build_windows.sh $ws2012r2 $JOB_TYPE "$hyperv01" > /home/jenkins-
 pid_ws2012=$!
 
 TIME_COUNT=0
-PROC_COUNT=4
+PROC_COUNT=3
 
 echo `timestamp` "Start waiting for parallel init jobs."
 
@@ -293,15 +295,15 @@ OSTACK_PROJECT=`echo "$ZUUL_PROJECT" | cut -d/ -f2`
 
 if [[ ! -z $IS_DEBUG_JOB ]] && [[ $IS_DEBUG_JOB == "yes" ]]
     then
-        echo "All build logs can be found in http://64.119.130.115/debug/$OSTACK_PROJECT/$ZUUL_CHANGE/$ZUUL_PATCHSET/"
+        echo "All build logs can be found in http://cloudbase-ci.com/debug/$OSTACK_PROJECT/$ZUUL_CHANGE/$ZUUL_PATCHSET/"
     else
-        echo "All build logs can be found in http://64.119.130.115/$OSTACK_PROJECT/$ZUUL_CHANGE/$ZUUL_PATCHSET/"
+        echo "All build logs can be found in http://cloudbase-ci.com/$OSTACK_PROJECT/$ZUUL_CHANGE/$ZUUL_PATCHSET/"
 fi
 
 if [[ $PROC_COUNT -gt 0 ]]; then
     kill -9 $pid_devstack > /dev/null 2>&1
     kill -9 $pid_hv01 > /dev/null 2>&1
-    kill -9 $pid_hv02 > /dev/null 2>&1
+    kill -9 $pid_ws2012 > /dev/null 2>&1
     echo "Not all build threads finished in time, initialization process failed."
     exit 1
 fi
