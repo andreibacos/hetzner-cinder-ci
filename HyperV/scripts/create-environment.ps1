@@ -50,6 +50,9 @@ $ErrorActionPreference = "SilentlyContinue"
 
 #destroy_planned_vms
 
+mkdir c:\SMBShare
+New-SMBShare -Name SMBShare -Path C:\SMBShare -FullAccess "Administrator"
+
 if (Get-Process -Name nova-compute){
     Throw "Nova is still running on this host"
 }
