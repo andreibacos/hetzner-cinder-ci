@@ -21,10 +21,10 @@ if [ $result_init -eq 0 ]; then
     fi
 fi
 
-#jen_date=$(date +%d/%m/%Y-%H:%M)
-#$basedir/collect_logs.sh 2>&1
-#result_collect=$?
-#echo "Collect logs job finished with exit code $result_collect"
+jen_date=$(date +%d/%m/%Y-%H:%M)
+$basedir/collect_logs.sh 2>&1
+result_collect=$?
+echo "Collect logs job finished with exit code $result_collect"
 
 if [ $result_init -eq 0 ] && [ $result_tempest -eq 0 ]; then
     exit 0

@@ -43,8 +43,7 @@ export JOB_TYPE
 echo "Deploying devstack $NAME"
 
 # make sure we use latest esxi scripts
-scp -r -o "StrictHostKeyChecking no" -o "UserKnownHostsFile /dev/null" -i $DEVSTACK_SSH_KEY $basedir/../esxi/* root@$ESXI_HOST:/vmf
-s/volumes/datastore1/
+scp -r -o "StrictHostKeyChecking no" -o "UserKnownHostsFile /dev/null" -i $DEVSTACK_SSH_KEY $basedir/../esxi/* root@$ESXI_HOST:/vmfs/volumes/datastore1/
 
 # Build the env
 run_ssh_cmd_with_retry root@$ESXI_HOST $DEVSTACK_SSH_KEY "/vmfs/volumes/datastore1/build-env.sh --project $ZUUL_PROJECT --zuul-change $ZUUL_CHANGE --zuul-patchset $ZUUL_PATCHSET $LIVE_MIGRATION $DEBUG"
@@ -147,7 +146,7 @@ update_local_conf (){
                 echo "No proper JOB_TYPE received!"
                 exit 1
     fi
-    scp -v -r -o "StrictHostKeyChecking no" -o "UserKnownHostsFile /dev/null" \
+    scp -r -o "StrictHostKeyChecking no" -o "UserKnownHostsFile /dev/null" \
         -i $DEVSTACK_SSH_KEY $EXTRA_OPTS_PATH \
         ubuntu@$DEVSTACK_FLOATING_IP:/home/ubuntu/devstack
     run_ssh_cmd_with_retry ubuntu@$DEVSTACK_FLOATING_IP $DEVSTACK_SSH_KEY \
@@ -175,10 +174,10 @@ echo "Starting building HyperV and ws2012 nodes"
 export LOG_DIR='C:\Openstack\logs\'
 
 echo "Copy scripts to devstack VM"
-scp -v -r -o "StrictHostKeyChecking no" -o "UserKnownHostsFile /dev/null" -i $DEVSTACK_SSH_KEY $basedir/../devstack_vm/* ubuntu@$DEVSTACK_FLOATING_IP:/home/ubuntu/
+scp -r -o "StrictHostKeyChecking no" -o "UserKnownHostsFile /dev/null" -i $DEVSTACK_SSH_KEY $basedir/../devstack_vm/* ubuntu@$DEVSTACK_FLOATING_IP:/home/ubuntu/
 
 echo "Copy devstack_params file to devstack VM"
-scp -v -r -o "StrictHostKeyChecking no" -o "UserKnownHostsFile /dev/null" -i $DEVSTACK_SSH_KEY /home/jenkins-slave/runs/devstack_params.$ZUUL_UUID.$JOB_TYPE.txt ubuntu@$DEVSTACK_FLOATING_IP:/home/ubuntu/bin/devstack_params.sh
+scp -r -o "StrictHostKeyChecking no" -o "UserKnownHostsFile /dev/null" -i $DEVSTACK_SSH_KEY /home/jenkins-slave/runs/devstack_params.$ZUUL_UUID.$JOB_TYPE.txt ubuntu@$DEVSTACK_FLOATING_IP:/home/ubuntu/bin/devstack_params.sh
 
 run_ssh_cmd_with_retry ubuntu@$DEVSTACK_FLOATING_IP $DEVSTACK_SSH_KEY "sed -i 's/export OS_AUTH_URL.*/export OS_AUTH_URL=http:\/\/127.0.0.1\/identity/g' /home/ubuntu/keystonerc" 3
 
@@ -216,9 +215,6 @@ fi
 
 echo "Update git repos to latest"
 run_ssh_cmd_with_retry ubuntu@$DEVSTACK_FLOATING_IP $DEVSTACK_SSH_KEY "/home/ubuntu/bin/update_devstack_repos.sh --branch $ZUUL_BRANCH --build-for $ZUUL_PROJECT" 6
-
-echo "Ensure configs are copied over"
-scp -v -r -o "StrictHostKeyChecking no" -o "UserKnownHostsFile /dev/null" -i $DEVSTACK_SSH_KEY $basedir/../devstack_vm/devstack/* ubuntu@$DEVSTACK_FLOATING_IP:/home/ubuntu/devstack
 
 run_ssh_cmd_with_retry ubuntu@$DEVSTACK_FLOATING_IP $DEVSTACK_SSH_KEY "sudo mkdir -p -m 777 /openstack/volumes" 6
 
